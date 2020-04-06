@@ -35,9 +35,9 @@ func (rec *Recorder) SetIsRecording(value bool) {
 }
 
 func (rec *Recorder) RecordValues() {
-	// TODO: Implement accelerometer values recording
+	// TODO: #1 Implement accelerometer values recording
 }
 
 func (rec *Recorder) Save(filepath string) {
-	// TODO: Implement saving Recorder.samples values into CSV file
+	// TODO: #2 Implement saving Recorder.samples values into CSV file
 }
