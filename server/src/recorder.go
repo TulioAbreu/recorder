@@ -33,3 +33,11 @@ func (rec *Recorder) SetIsRecording(value bool) {
 	defer rec.mux.Unlock()
 	rec.isRunning = value
 }
+
+func (rec *Recorder) RecordValues() {
+	// TODO: Implement accelerometer values recording
+}
+
+func (rec *Recorder) Save(filepath string) {
+	// TODO: Implement saving Recorder.samples values into CSV file
+}
