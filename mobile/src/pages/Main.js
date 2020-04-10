@@ -3,6 +3,8 @@ import { Alert, StyleSheet, View, Text, TextInput, TouchableOpacity } from 'reac
 import { MaterialIcons } from '@expo/vector-icons';
 
 function Main({ navigation }) {
+    const [url, setUrl] = useState('');
+
     function onConnectionFail() {
         Alert.alert(
             'Erro',
@@ -10,10 +12,48 @@ function Main({ navigation }) {
             [
                 {text: 'OK', style: styles.buttonText}
             ]
-        )
+        );
+    }
+
+    function onInvalidAddress() {
+        Alert.alert(
+            'Erro',
+            'Preencha o campo "Endereço do IP".',
+            [
+                {text: 'OK', style: styles.buttonText}
+            ]
+        );
+    }
+
+    function onConnectionLost() {
+        Alert.alert(
+            'Erro',
+            'Conexão perdida.',
+            [
+                {text: 'OK', style: styles.buttonText}
+            ]
+        );
     }
 
     function buttonConnect() {
+        if (url === '') {
+            onInvalidAddress();
+            return;
+        }
+
+        let connection = new WebSocket(url);
+
+        connection.onclose = function () {
+            onConnectionLost();
+        }
+
+        connection.onerror = function (error) {
+            onConnectionFail();
+        }
+
+        connection.onopen = function () {
+            navigation.navigate('Record', { conn: connection });
+        }
     }
 
     return (
@@ -35,8 +75,9 @@ function Main({ navigation }) {
                     style={styles.textInput}
                     placeholder=""
                     placeholderTextColor="#999"
-                    autoCapitalize="words"
                     autoCorrect={false}
+                    value={url}
+                    onChangeText={setUrl}
                 />
                 <TouchableOpacity
                     style={styles.button}
