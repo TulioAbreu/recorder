@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"net"
-	"strings"
 	"sync"
 )
 
@@ -37,20 +36,20 @@ func (serv *Server) Run(wg *sync.WaitGroup) {
 
 	conn, _ := ln.Accept()
 	defer conn.Close()
+	defer wg.Done()
 
 	fmt.Println("[INFO] Conexão iniciada.")
 
 	for {
-		message, _ := bufio.NewReader(conn).ReadString('\n')
-		serv.SetCommand(message)
+		message, err := bufio.NewReader(conn).ReadString('\n')
+		fmt.Println("[DEBUG] Message received.")
 
-		fmt.Println("[DEBUG] Mensagem recebida:", message)
-
-		if strings.HasPrefix(message, "!finish") {
-			serv.isRunning = false
-			break
+		if err != nil {
+			fmt.Println("[ERRO] Conexão perdida!")
+			return
 		}
-	}
 
-	wg.Done()
+		serv.SetCommand(message)
+		fmt.Println("[DEBUG] Mensagem recebida:", message)
+	}
 }
