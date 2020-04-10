@@ -1,10 +1,11 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"net"
+	"net/http"
 	"sync"
+
+	"github.com/gorilla/websocket"
 )
 
 type Server struct {
@@ -12,6 +13,12 @@ type Server struct {
 	command   string
 	isRunning bool
 	mux       sync.Mutex
+}
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
 func CreateServer(port string) Server {
@@ -32,24 +39,28 @@ func (serv *Server) SetCommand(value string) {
 
 func (serv *Server) Run(wg *sync.WaitGroup) {
 	serv.isRunning = true
-	ln, _ := net.Listen("tcp", ":"+serv.port)
 
-	conn, _ := ln.Accept()
-	defer conn.Close()
-	defer wg.Done()
-
-	fmt.Println("[INFO] Conexão iniciada.")
-
-	for {
-		message, err := bufio.NewReader(conn).ReadString('\n')
-		fmt.Println("[DEBUG] Message received.")
+	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+		socket, err := upgrader.Upgrade(writer, request, nil)
 
 		if err != nil {
-			fmt.Println("[ERRO] Conexão perdida!")
-			return
+			fmt.Println(err)
 		}
 
-		serv.SetCommand(message)
-		fmt.Println("[DEBUG] Mensagem recebida:", message)
-	}
+		fmt.Println("[INFO] Conexão estabelecida!")
+
+		for {
+			_, msg, err := socket.ReadMessage()
+
+			if err != nil {
+				fmt.Println("[DEBUG] Conexão perdida!")
+				wg.Done()
+				return
+			}
+
+			serv.SetCommand(string(msg))
+			fmt.Println("[LOG] Recebida a mensagem:", string(msg))
+		}
+	})
+	http.ListenAndServe(":"+serv.port, nil)
 }
