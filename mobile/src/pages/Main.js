@@ -132,7 +132,19 @@ const styles = StyleSheet.create({
         marginTop: 25,
         right: 0
     },
-    
+
+    buttonStop: {
+        alignSelf: "flex-end",
+        borderRadius: 3,
+        backgroundColor: "#D65656",
+        width: 120,
+        height: 60,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 25,
+        right: 0
+    },
+
     buttonText: {
         color: "#FFF",
         fontSize: 16,
