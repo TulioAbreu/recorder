@@ -4,6 +4,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 function Record({ navigation }) {
     let conn = navigation.getParam('conn');
+    const [activityName, setActivityName] = useState('')
+    const [startRecMode, setStartRecMode] = useState(true)
 
     function onConnectionLost() {
         Alert.alert(
@@ -16,8 +18,15 @@ function Record({ navigation }) {
         navigation.navigate('Main');
     }
 
-    function buttonConnect() {
+   
+    function onPressStart() {
+        setStartRecMode(false);
+        conn.send('!start');
+    }
 
+    function onPressStop() {
+        setStartRecMode(true);
+        conn.send('!finish');
     }
 
     return (
@@ -28,8 +37,49 @@ function Record({ navigation }) {
                 <Text
                     style={styles.pageTitle}
                 >
-                    Conexão
+                    Gravar Atividade
                 </Text>
+
+                { startRecMode?
+                    <>
+                        <Text
+                            style={styles.label}
+                        >
+                            Atividade
+                        </Text>
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder=""
+                            placeholderTextColor="#999"
+                            autoCorrect={false}
+                            value={activityName}
+                            onChangeText={setActivityName}
+                        />
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={onPressStart}
+                        >
+                            <Text
+                                style={styles.buttonText}
+                            >
+                                Iniciar
+                            </Text>
+                        </TouchableOpacity>
+                    </>
+                    :
+                    <>
+                        <TouchableOpacity
+                            style={styles.buttonStop}
+                            onPress={onPressStop}
+                        >
+                            <Text
+                                style={styles.buttonText}
+                            >
+                                Parar
+                            </Text>
+                        </TouchableOpacity>
+                    </>
+                }
             </View>
         </>
     )
