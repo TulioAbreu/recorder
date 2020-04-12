@@ -23,22 +23,24 @@ function Record({ navigation }) {
     function onStart(activityStr) {
         setIsRecording(true);
 
-        const msg = {
+        const msg = JSON.stringify({
             opcode: "start",
             activity: activityStr
-        };
+        });
+        console.log(msg);
 
-        conn.send(JSON.parse(msg));
+        conn.send(msg);
     }
 
     function onStop() {
         setIsRecording(false);
 
-        const msg = {
+        const msg = JSON.stringify({
             opcode: "finish"
-        };
+        });
+        console.log(msg);
 
-        conn.send(JSON.parse(msg));
+        conn.send(msg);
     }
 
     return (

@@ -20,7 +20,7 @@ function RecordStart(props) {
             />
             <TouchableOpacity
                 style={styles.buttonStart}
-                onPress={onPress}
+                onPress={() => onPress(activity)}
             >
                 <Text
                     style={styles.textButtonStart}
