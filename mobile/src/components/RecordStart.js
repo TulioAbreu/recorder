@@ -4,6 +4,8 @@ import {} from 'socket.io-client';
 
 function RecordStart(props) {
     const { onPress } = props;
+    const [ activity, setActivity ] = useState('');
+
     return (
         <>
             <Text
@@ -13,6 +15,8 @@ function RecordStart(props) {
             </Text>
             <TextInput
                 style={styles.textInput}
+                onChangeText={setActivity}
+                value={activity}
             />
             <TouchableOpacity
                 style={styles.buttonStart}

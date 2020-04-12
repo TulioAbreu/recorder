@@ -20,16 +20,25 @@ function Record({ navigation }) {
         navigation.navigate('Main');
     }
 
-    function onStart() {
-        console.log("Start recording!");
+    function onStart(activityStr) {
         setIsRecording(true);
-        conn.send("!start");
+
+        const msg = {
+            opcode: "start",
+            activity: activityStr
+        };
+
+        conn.send(JSON.parse(msg));
     }
 
     function onStop() {
-        console.log("Stop recording!");
         setIsRecording(false);
-        conn.send("!finish");
+
+        const msg = {
+            opcode: "finish"
+        };
+
+        conn.send(JSON.parse(msg));
     }
 
     return (
