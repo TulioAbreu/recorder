@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"sync"
@@ -9,10 +10,11 @@ import (
 )
 
 type Server struct {
-	port      string
-	command   string
-	isRunning bool
-	mux       sync.Mutex
+	port         string
+	command      string
+	commandParam string
+	isRunning    bool
+	mux          sync.Mutex
 }
 
 var upgrader = websocket.Upgrader{
@@ -31,10 +33,34 @@ func (serv *Server) Command() string {
 	return serv.command
 }
 
-func (serv *Server) SetCommand(value string) {
+func (serv *Server) ClearCommand() {
 	serv.mux.Lock()
 	defer serv.mux.Unlock()
-	serv.command = value
+	serv.command = ""
+	serv.commandParam = ""
+}
+
+func (serv *Server) SetCommand(value JsonMessage) {
+	serv.mux.Lock()
+	defer serv.mux.Unlock()
+	serv.command = value.Opcode
+	serv.commandParam = value.Activity
+}
+
+type JsonMessage struct {
+	Opcode   string `json:"opcode"`
+	Activity string `json:"activity"`
+}
+
+func StrToJsonMessage(str string) JsonMessage {
+	var msg JsonMessage
+	err := json.Unmarshal([]byte(str), &msg)
+
+	if err != nil {
+		return JsonMessage{}
+	}
+
+	return msg
 }
 
 func (serv *Server) Run(wg *sync.WaitGroup) {
@@ -58,7 +84,8 @@ func (serv *Server) Run(wg *sync.WaitGroup) {
 				return
 			}
 
-			serv.SetCommand(string(msg))
+			var jsonMsg JsonMessage = StrToJsonMessage(string(msg))
+			serv.SetCommand(jsonMsg)
 			fmt.Println("[LOG] Recebida a mensagem:", string(msg))
 		}
 	})

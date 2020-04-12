@@ -37,15 +37,15 @@ func RunCommands(rec *Recorder, serv *Server) {
 			continue
 		}
 
-		if strings.HasPrefix(cmd, "!start") {
+		if strings.HasPrefix(cmd, "start") {
 			fmt.Println("[INFO] Started recording.")
 			rec.SetIsRecording(true)
 			// go recordSample()
-		} else if strings.HasPrefix(cmd, "!finish") {
+		} else if strings.HasPrefix(cmd, "finish") {
 			fmt.Println("[INFO] Finished recording.")
 			rec.SetIsRecording(false)
 		}
 
-		serv.SetCommand("")
+		serv.ClearCommand()
 	}
 }
