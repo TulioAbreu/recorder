@@ -2,8 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Alert, StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
+import RecordStart from '../components/RecordStart';
+import RecordStop from '../components/RecordStop';
+
 function Record({ navigation }) {
     let conn = navigation.getParam('conn');
+    let [isRecording, setIsRecording] = useState(false);
 
     function onConnectionLost() {
         Alert.alert(
@@ -16,8 +20,16 @@ function Record({ navigation }) {
         navigation.navigate('Main');
     }
 
-    function buttonConnect() {
+    function onStart() {
+        console.log("Start recording!");
+        setIsRecording(true);
+        conn.send("!start");
+    }
 
+    function onStop() {
+        console.log("Stop recording!");
+        setIsRecording(false);
+        conn.send("!finish");
     }
 
     return (
@@ -28,8 +40,14 @@ function Record({ navigation }) {
                 <Text
                     style={styles.pageTitle}
                 >
-                    Conexão
+                    Gravar Atividade
                 </Text>
+
+                {(!isRecording)?
+                    <RecordStart onPress={onStart}/>
+                    :
+                    <RecordStop onPress={onStop}/>
+                }
             </View>
         </>
     )
