@@ -19,6 +19,7 @@ You can easily upload the "main.ino" file to your board, using [Arduino IDE](htt
 
 Building/running server:
 ```console
+$ go get github.com/gorilla/websocket
 $ go build ./server/src
 $ ./src
 ```
