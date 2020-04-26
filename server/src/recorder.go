@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"os"
 	"sync"
 )
 
@@ -38,6 +40,27 @@ func (rec *Recorder) RecordValues() {
 	// TODO: #1 Implement accelerometer values recording
 }
 
+func WriteFile(filePath string, strData string) bool {
+	file, err := os.Create(filePath)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(strData)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+
+	return true
+}
+
 func (rec *Recorder) Save(filepath string) {
-	// TODO: #2 Implement saving Recorder.samples values into CSV file
+	var csvStr = "x,y,z\n" // CSV Header
+	for i := 0; i < len(rec.samples); i++ {
+		csvStr += fmt.Sprintf("%f,%f,%f\n", rec.samples[i].x, rec.samples[i].y, rec.samples[i].z)
+	}
+	WriteFile(filepath, csvStr)
 }
